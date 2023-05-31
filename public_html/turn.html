@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Japan Olympics</title>
+        <style>
+            #canvas
+            {
+                width:1500px;
+                height:500px;
+            }
+
+            #loadingMessage
+            {
+                position:absolute;
+                top:100px;
+                left:100px;
+                z-index:100;
+                font-size:50px;
+            }
+
+            @keyframes framek
+            {
+                0%{
+
+                    top: 0px;
+                    left: 0px;
+                    height : 400px ;
+                    width : 600px ;
+                    opacity : 1.0;
+
+                }
+                99%{
+
+                    top: 0px;
+                    left: 0px;
+                    height : 400px ;
+                    width : 600px ;
+                    opacity : 1.0;
+
+                }
+
+
+                100%{
+
+
+                    height   : 0px ;
+                    display:none;
+                }
+
+            }
+            .frame1 {
+
+
+
+                position : relative ;
+                height   : 0px ;
+                width    : 600px ;
+
+                display:none;
+
+
+
+                animation-duration: 4s;
+
+                animation-name: framek;
+
+            }
+
+
+
+            @keyframes delayedShow {
+                from 
+                {
+                    display:none;
+                }
+
+                to {
+                    visibility: visible;
+
+                }
+            }
+            .delayedShow{
+                visibility: hidden;
+
+                animation: 2s linear 20s forwards delayedShow ;
+            }
+
+
+
+            .delayedShow2{
+                visibility: hidden;
+
+                animation: 0s linear 0.9s forwards delayedShow ;
+            }
+            .delayedShow3{
+                visibility: hidden;
+
+                animation: 0s linear 1.6s forwards delayedShow ;
+            }
+
+
+
+            .picframe{
+                margin-left: 1px;
+
+                position : relative ;
+                height   : 500px ;
+                width    : 600px ;
+
+            }
+
+            @keyframes bounceInDown {
+
+
+                0% {
+                    opacity: 0;
+
+                    transform: translate3d(0, -3000px, 0);
+                }
+
+                60% {
+                    opacity: 1;
+
+                    transform: translate3d(0, 25px, 0);
+                }
+
+                75% {
+
+                    transform: translate3d(0, -10px, 0);
+                }
+
+                90% {
+
+                    transform: translate3d(0, 5px, 0);
+                }
+
+                to {
+
+                    transform: translate3d(0, 0, 0);
+                }
+            }
+
+            @keyframes bounceIn {
+
+
+                0% {
+                    opacity: 0;
+
+                    transform: scale3d(0.3, 0.3, 0.3);
+                }
+
+                20% {
+
+                    transform: scale3d(1.1, 1.1, 1.1);
+                }
+
+                40% {
+
+                    transform: scale3d(0.9, 0.9, 0.9);
+                }
+
+                60% {
+                    opacity: 1;
+
+                    transform: scale3d(1.03, 1.03, 1.03);
+                }
+
+                80% {
+
+                    transform: scale3d(0.97, 0.97, 0.97);
+                }
+
+                to {
+                    opacity: 1;
+
+                    transform: scale3d(1, 1, 1);
+                }
+            }
+
+
+            .card {
+                margin-left: 2px;
+                opacity: 0.85;
+
+                width    : 600px ;
+                background-color: #f7f7f7;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
+                transition: 0.3s;
+
+
+                border-radius: 5px;
+                animation-delay:0.9s;
+                animation-duration: 1s;
+
+                animation-name: bounceIn;
+
+            }
+            .card2 {
+                margin-left: 2px;
+                opacity: 0.85;
+
+                width    : 600px ;
+                background-color: #f7f7f7;
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.8);
+                transition: 0.3s;
+
+
+                border-radius: 5px;
+                animation-delay:1.6s;
+                animation-duration: 1s;
+
+                animation-name: bounceInDown;
+
+            }
+            .ptext {
+                padding: 10px;
+                font-size:20px;			  
+            }
+            .body {
+
+                border: 0px;
+                padding: 0px;
+                margin: 0px;
+            }
+
+
+
+
+        </style>
+
+        <script>
+            let canvas = null;
+                    let
+            ctx = null;
+            window.onload = onAllAssetsLoaded;
+            document.write("<div id='loadingMessage'>Loading...</div>");
+            function onAllAssetsLoaded()
+            {
+                // stopAndHide the webpage loading message
+                document.getElementById('loadingMessage').style.visibility = "hidden";
+
+                canvas = document.getElementById("canvas");
+                ctx = canvas.getContext("2d");
+                canvas.width = canvas.clientWidth;
+                canvas.height = canvas.clientHeight;
+
+                /* Step 1 of 3 */
+                /* Start the animations */
+                setTimeout(startImageAnimation, 0);
+                setTimeout(startTextAnimation, 2200);
+                //setTimeout(stopAndHideTextAnimation, 7200);
+
+                renderCanvas();
+                document.getElementById("frame1").style.display = "none";
+            }
+
+            function hidecanvas() {
+                document.getElementById("canvas").style.display = "none";
+            }
+            function hideframe() {
+                document.getElementById("frame").style.display = "none";
+            }
+
+            /* Step 2 of 3 */
+            /* Each animation needs its own code */
+            /******************************************************************************/
+            /* These three are ALWAYS needed */
+            let
+            imageAnimationInterval = null;
+                    let
+            imagetransitionInterval = null;
+                    const IMAGE_FRAMERATE = 0.5; // change to suit the animation frameRate in milliseconds. Smaller numbers give a faster animation */
+                    const TRANSITION_FRAMERATE = 0.3;
+                    let
+            imageAnimationIsDisplayed = false;
+                    let
+            transitionIsDisplayed = false;
+            /* These variables depend on the animation */
+            let spectator = new Image();
+                    let rtrack = new Image();
+                    let markline = new Image();
+                    let
+            jflag = new Image();
+                    let
+            alp = 0.1;
+            var imgArray = new Array();
+            for (var i = 1; i <= 50; i++)
+            {
+                imgArray[i - 1] = new Image();
+                imgArray[i - 1].src = "images/picture" + i + ".png";
+            }
+
+            //spectator.src = "images/Picture5.png";
+            //spectator.src = "images/spectator.png";
+            spectator.src = "images/crowdcl.png";
+            rtrack.src = "images/rtrack.png";
+            jflag.src = "images/japanflag.png";
+            //markline.src = "images/markline.png";
+            let spectatorX1 = - 1326 / 3;
+                    let spectatorX2 = - 1326 / 3;
+                    let spectatorX3 = - 1326 / 3;
+                    let spectatorX4 = - 1326 / 3;
+                    let spectatorX5 = - 1326 / 3;
+                    let spectatorX6 = - 1326 / 3;
+                    let
+            spectatorY = 10;
+                    let
+            sizey = 30;
+            //let sizex = canvas.width/4;
+            let
+            sizex = 8525; //canvas.width/4
+
+            let
+            flx = 120 * 5;
+                    let
+            fly = 80 * 5;
+                    let rtrackX = - 1326 / 2;
+                    let rtsizey = 260;
+                    let
+            rtsizex = 5162; //canvas.width/4
+                    let
+            cycles = 1;
+            //let markliney= 30;
+
+            //let size canvas.width/3;
+
+            function startImageAnimation()
+            {
+                imageAnimationIsDisplayed = true;
+                imageAnimationInterval = setInterval(updateImageAnimation, IMAGE_FRAMERATE);
+            }
+
+
+            function stopImageAnimation()
+            {
+                imageAnimationIsDisplayed = true;
+                clearInterval(imageAnimationInterval);
+                imageAnimationInterval = null; // set to null when not running           
+            }
+
+
+            function stopAndHideImageAnimation()
+            {
+                stopImageAnimation();
+                imageAnimationIsDisplayed = false;
+            }
+//
+            function starttransition()
+            {
+                transitionIsDisplayed = true;
+                imagetransitionInterval = setInterval(updatetransition, TRANSITION_FRAMERATE);
+            }
+
+
+            function stoptransition()
+            {
+                transitionIsDisplayed = true;
+                clearInterval(imagetransitionInterval);
+                imagetransitionInterval = null; // set to null when not running           
+            }
+
+
+            function stopAndHidetransition()
+            {
+                stopImageAnimation();
+                transitionIsDisplayed = false;
+            }
+
+            function updatetransition()
+            {
+                alp = alp + 0.5;
+            }
+
+            function rendertransition()
+            {
+                if (transitionIsDisplayed)
+                {
+                    //ctx.drawImage(spectator, -spectatorX1, spectatorY, sizex*1.8, sizey*1.8);
+                    if (alp > 9.9)
+                    {
+                        hidecanvas();
+                        document.getElementById("frame1").style.display = "block";
+                    }
+                    //context.save();
+                    //context.globalAlpha = 0.5;
+
+                    ctx.drawImage(jflag, 0, 0, flx, fly);
+                    //context.restore();
+                    //draw image
+                }
+            }
+
+//
+            function updateImageAnimation()
+            {
+
+                spectatorX1 = spectatorX1 + 0.44;
+                spectatorX2 = spectatorX2 + 0.46;
+                spectatorX3 = spectatorX3 + 0.48;
+                spectatorX4 = spectatorX4 + 0.5;
+                spectatorX5 = spectatorX5 + 0.52;
+                spectatorX6 = spectatorX6 + 0.54;
+                rtrackX = rtrackX + 0.57;
+                cycles++;
+                //if (size === canvas.width/4)
+                //if ( spectatorX3> canvas.width)
+                if (spectatorX3 > sizex - canvas.width * 3)
+                {
+                    //stopImageAnimation();
+                    stopAndHideImageAnimation()
+                }
+            }
+
+            var k = 0;
+            var kn = 1;
+            var eventc = 0;
+            function renderImageAnimation()
+            {
+                if (imageAnimationIsDisplayed)
+                {
+                ctx.drawImage(spectator, - spectatorX1, spectatorY, sizex * 1.8, sizey * 1.8);
+                        ctx.drawImage(spectator, - spectatorX2, spectatorY + sizey, sizex * 1.8, sizey * 1.8);
+                        ctx.drawImage(spectator, - spectatorX3, spectatorY + 2 * sizey, sizex * 1.8, sizey * 1.8);
+                        ctx.drawImage(spectator, - spectatorX4, spectatorY + 3 * sizey, sizex * 1.8, sizey * 1.8);
+                        ctx.drawImage(spectator, - spectatorX5, spectatorY + 4 * sizey, sizex * 1.8, sizey * 1.8);
+                        //ctx.drawImage(spectator, -spectatorX3-3, spectatorY+5*sizey, sizex, sizey);
+                        k = kn;
+                        kn = (cycles % 120);
+                        if (kn < k){eventc++; }
+                if (eventc >= 40)
+                {
+                stopAndHideImageAnimation();
+                        //hidecanvas();
+                        starttransition();
+                        textAnimationIsDisplayed = false;
+                }
+                ctx.drawImage(imgArray[eventc], 200 - k / 10, spectatorY + 6 * sizey, );
+                        //ctx.drawImage(markline, -rtrackX, spectatorY+6*sizey-10, rtsizex, markliney);
+                }
+            }
+            /******************************************************************************/
+
+
+            /******************************************************************************/
+            /* These three are ALWAYS needed */
+            let
+            textAnimationInterval = null;
+            const TEXT_FRAMERATE = 5; // change to suit the animation frameRate in milliseconds. Smaller numbers give a faster animation */
+                    let
+            textAnimationIsDisplayed = false;
+            let
+            textX = 100; // canvas width
+            let
+            minTextX = 35;
+            let
+            textY = 400;
+            let
+            message = "TOKYO OLYMPICS 2020";
+            let
+            fontSize = 50;
+            let
+            textColour = "grey";
+            /* Start the animation */
+            function startTextAnimation()
+            {
+                textAnimationIsDisplayed = true;
+                textAnimationInterval = setInterval(updateTextAnimation, TEXT_FRAMERATE);
+            }
+
+
+            function stopTextAnimation()
+            {
+                textAnimationIsDisplayed = true;
+                clearInterval(textAnimationInterval);
+                textAnimationInterval = null; // set to null when not running           
+            }
+
+
+            function stopAndHideTextAnimation()
+            {
+                stopAndHideTextAnimation();
+                textAnimationIsDisplayed = false;
+            }
+
+
+            function updateTextAnimation()
+            {
+                textX--;
+                if (textX === minTextX)
+                {
+                    stopTextAnimation();
+
+
+                }
+            }
+
+
+            function renderTextAnimation()
+            {
+                if (textAnimationIsDisplayed)
+                {
+                    ctx.fillStyle = textColour;
+                    ctx.font = fontSize + "px Times Roman";
+                    ctx.fillText(message, textX, textY);
+                }
+            }
+            /******************************************************************************/
+
+
+            function renderCanvas()
+            {
+                requestAnimationFrame(renderCanvas);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+
+                /* Step 3 of 3 */
+                /* Drawn the animations */
+                renderImageAnimation();
+                renderTextAnimation();
+                rendertransition();
+            }
+        </script>
+    </head>
+
+    <body>
+        <canvas id = "canvas" tabindex="1">
+            Your browser does not support the HTML5 'Canvas' tag.
+        </canvas>
+
+        <div class="delayedShow">
+            <img class="frame1" id="frame1" src="images/japanflag.png" alt=""/>
+
+        </div>
+        <div class="delayedShow2">
+            <div class="card" id="card1">	
+                <div class="ptext" id="text2">
+                    The 2020 Summer Olympics and commonly known as Tokyo 2020 is an upcoming international multi-sport event that is scheduled to take place from 24 July to 9 August 2020 in Tokyo, Japan, with preliminary events in some sports beginning on 22 July.
+                </div>
+            </div>
+            <br>
+            <div class="card" id="card1">	
+                <div class="ptext" id="text2">
+                    Additional competitions at the Summer Olympics, including 3x3 basketball, freestyle BMX and Madison cycling, as well as further mixed events, such Games will see karate, sport climbing, surfing and skateboarding make their Olympic debuts, as well as the return of baseball and softball for the first time since 2008. 
+                </div>
+            </div>
+            <br>
+
+        </div>
+        <br>
+        <div class="delayedShow3">
+            <div class="card2" id="cardpic">	
+
+                <img class="picframe" id="logo6" src="images/logo6.jpg" alt=""/>
+
+            </div>
+        </div>
+
+    </body>
+</html>
+
+
+
+
